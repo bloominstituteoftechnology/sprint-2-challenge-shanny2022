@@ -73,8 +73,7 @@
     // ❗ Debug properly using the Console
 
     // 👉 CHALLENGE 1
-    function profileActivation() {
-      // 🧠 profileActivation takes two arguments, profile and reason, which are an object and a string respectively
+    // 🧠 profileActivation takes two arguments, profile and reason, which are an object and a string respectively
       //  The reason arg is only used -and therefore required- to deactivate profiles, not to activate them
       //  The profile arg has an `active` property holding a Boolean value
       //    * If profile is active, profileActivation deactivates it and writes a `reason` prop holding the reason
@@ -85,11 +84,39 @@
       //    * If the profile is active but it has a `reason` prop, return the string "confirm status manually"
       //    * If the profile is **missing** an `active` prop, return the string "impossible to ascertain status"
       // 🌟 HINT: to confirm the existence of a prop, check that its value is not undefined
+      function profileActivation(profile, reason) {
+    // Check if the profile is missing an 'active' prop
+    if (profile.active === undefined) {
+        return "impossible to ascertain status";
     }
 
+    // Check if the profile is active
+    if (profile.active) {
+        // Check if the profile has a 'reason' prop
+        if (profile.reason !== undefined) {
+            return "confirm status manually";
+        }
+
+        // Deactivate the profile and add the 'reason' prop
+        profile.active = false;
+        profile.reason = reason;
+    } else {
+        // Check if the profile has a missing 'reason' prop
+        if (profile.reason === undefined) {
+            return "confirm status manually";
+        }
+
+        // Activate the profile and delete the 'reason' prop
+        delete profile.reason;
+        profile.active = true;
+    }
+
+    // Return the updated profile object
+    return profile;
+}
+
     // 👉 CHALLENGE 2
-    function mineSweeper() {
-      // 🧠 mineSweeper takes a grid as its first argument, and coordinates x and y as the second and third args
+       // 🧠 mineSweeper takes a grid as its first argument, and coordinates x and y as the second and third args
       //  The grid is an array of arrays in the following format: [["🟥","🟦","🟥"],["🟦","🟥","🟥"],["🟥","🟦","🟦"]]
       //  Each subarray is a row of the grid, the first subarray being the top row:
       //  [
@@ -107,10 +134,29 @@
       //    * If the player lands on blue, return the string "🟦 🥳"
       // 🧠 Edge cases:
       //    * If the x or y coordinates are under 1 or over 3, return the string "invalid coordinates"
+      function mineSweeper(grid, x, y) {
+    // Check if the coordinates are invalid
+    if (x < 1 || x > 3 || y < 1 || y > 3) {
+        return "invalid coordinates";
     }
 
+    // Get the value at the specified coordinates
+    const square = grid[y - 1][x - 1];
+
+    // Check if the square is a mine or safe
+    if (square === "🟥") {
+        return "🟥 💀"; // Player landed on a mine
+    } else if (square === "🟦") {
+        return "🟦 🥳"; // Player landed on a safe square
+    }
+
+    // This case should not occur with a valid grid
+    return "invalid grid";
+}
+
+
+
     // 👉 CHALLENGE 3
-    function booleanize() {
       // 🧠 booleanize takes an object as its single argument, which can have any number of properties
       // Loop over the properties and then return the object, after applying the following transformations:
       //    * If a value is the number zero, it must be transformed into the Boolean false
@@ -119,10 +165,36 @@
       // 🧠 Edge cases:
       //    * If a property name exceeds 9 characters, return the string "shorten all prop names to 9 chars or less"
       // 🌟 HINT: careful not to perform any unintended changes on the object
+      function booleanize(obj) {
+    // Loop over the properties of the object
+    for (const key in obj) {
+        // Check if the property name exceeds 9 characters
+        if (key.length > 9) {
+            return "shorten all prop names to 9 chars or less";
+        }
+
+        // Get the value of the property
+        const value = obj[key];
+
+        // Transform the value based on the conditions
+        if (value === 0) {
+            obj[key] = false;
+        } else if (value === 1) {
+            obj[key] = true;
+        } else if (value === null) {
+            // Delete the key-value pair if the value is null
+            delete obj[key];
+        }
+        // No action needed for other values
     }
 
+    // Return the updated object
+    return obj;
+}
+
+
+
     // 👉 CHALLENGE 4
-    function scrub() {
       // 🧠 scrub takes a string "text" as its first argument, and an array of forbidden words "forbidden" as its second
       // Any word in the text included in the array of forbidden words is replaced with a word of equal length but made of lowcase "x"
       // The scrubbed text is then returned from the function, as seen in the examples below
@@ -134,10 +206,28 @@
       //    scrub("aces high", ["high", "aces", "hearts"]) // returns "xxxx xxxx"
       //    scrub("", ["high", "aces""]) // returns ""
       // 🌟 HINT: useful array methods to use are `push`, `indexOf`, `split`, `join`
+      function scrub(text, forbidden) {
+    // Split the input text into words
+    const words = text.split(" ");
+
+    // Iterate over each word and replace if it's forbidden
+    for (let i = 0; i < words.length; i++) {
+        // Check if the current word is in the forbidden array
+        if (forbidden.indexOf(words[i]) !== -1) {
+            // Replace the word with a string of 'x' of equal length
+            words[i] = "x".repeat(words[i].length);
+        }
     }
 
+    // Join the words back into a string
+    const scrubbedText = words.join(" ");
+
+    return scrubbedText;
+}
+
+
+
     // 👉 CHALLENGE 5
-    function normalizePhoneNumber() {
       // 🧠 normalizePhoneNumber takes a string as its only argument, representing a ten-digit number
       // The function returns a string formatted as seen below
       // 🧠 Examples of usage:
@@ -149,17 +239,56 @@
       // 🌟 HINT: instead of looping over the number's digits, loop backwards over a template "(XXX) XXX-XXXX"
       // 🌟 HINT: at each iteration, if the current character is an "X", replace it with the result of popping a digit from the number
       // 🌟 HINT: if you'd rather loop forwards, use `shift` instead of `pop`
+      function normalizePhoneNumber(number) {
+    if (number.length !== 10) {
+        return "type a 10-digit number";
     }
 
+    for (let i = 0; i < number.length; i++) {
+        if (isNaN(number[i])) {
+            return "invalid phone number";
+        }
+    }
+
+    let formattedNumber = "(XXX) XXX-XXXX";
+
+    for (let i = 0; i < number.length; i++) {
+        formattedNumber = formattedNumber.replace("X", number[i]);
+    }
+
+    return formattedNumber;
+}
+
+console.log(normalizePhoneNumber("9876543210")); // Output: "(987) 654-3210"
+console.log(normalizePhoneNumber("1111111111")); // Output: "(111) 111-1111"
+
+
     // 👉 CHALLENGE 6 (bonus, NOT graded)
-    function diceRolls() {
       // 🧠 diceRolls takes no arguments and returns a number
       // The function throws a six-sided dice until 3 sixes in a row are obtained
       // The number of throws it took to obtain that third-in-a-row six is then returned from the function
       // 🌟 HINT: research using `Math.random` to obtain a number from 1 to 6
       // 🌟 HINT: use `while(true)` to throw the dice indefinitely, but avoid an infinite loop by making sure to break out eventually
       // 🌟 HINT: you need to keep track of the total number of throws, as well as how many sixes in a row
+    function diceRolls() {
+  while (true) {
+    let count = 0;
+    let throws = 0;
+    while (count < 3) {
+      const roll = Math.floor(Math.random() * 6) + 1;
+      throws++;
+      if (roll === 6) {
+        count++;
+      } else {
+        count = 0;
+      }
     }
+    if (count === 3) {
+      return throws;
+    }
+  }
+}
+
 
     // 🧪 TESTS, do not make any changes below this line ===================
     // 🧪 TESTS, do not make any changes below this line ===================
